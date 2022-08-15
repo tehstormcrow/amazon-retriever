@@ -1,0 +1,85 @@
+<% include ../partials/header.ejs %>
+
+
+<div class="container-rowed">
+
+  <div id="table-scroll-1" class="table-scroll">
+    <div id="faux-table-1" class="faux-table"></div>
+    <div id="table-wrap-1" class="table-wrap">
+      <table id="table-1">
+
+<thead>
+    <tr>
+      <!-- Make date dynamic -->
+      <th colspan="16">Products</th>
+    </tr>
+    <tr>
+      <th>SKU</th>
+      <th>ASIN</th>
+      <th>Lowest Price</th>
+      <th>Inbound</th>
+      <th>Quantity</th>
+      <th>Sales Price</th>
+      <th>Cost</th>
+      <th>Ng-Amz</th>
+      <th>Amz-Cust</th>
+      <th>M-Cust</th>
+      <th>Commision</th>
+      <th>total cost</th>
+      <th>Profit $</th>
+      <th>Profit % Cost</th>
+      <th>Profit % SP</th>
+      <th>Unused</th>
+    </tr>
+</thead>
+
+<tbody>
+    <% var line = 0 %>
+    <% products.forEach(function(product) { %>
+      <% line += 1 %>
+        <tr <% if(line % 2 == 0){ %>
+          class="odd"
+        <% }%>>
+          <td><%= product.SKU %></td>
+          <td><%= product.ASIN %></td>
+          <td><%= product["lowest-price"] ? product["lowest-price"].toFixed(2) : "" %></td>
+          <td><%= product.inbound %></td>
+          <td><%= product.quantity %></td>
+          <td><%= product["current-price"] ? product["current-price"].toFixed(2) : "" %></td>
+          <td><%= product["cost"] ? product["cost"].toFixed(2) : "" %></td>
+          <td><%= product["ng-amz"] ? product["ng-amz"].toFixed(2) : "" %></td>
+          <td><%= product["amz-customer"] ? product["amz-customer"].toFixed(2) : "" %></td>
+          <td><%= rates[product.SKU] ? rates[product.SKU].toFixed(2) : "" %></td>
+          <td><%= product["commision"] ? product["commision"].toFixed(2) : "" %></td>
+          <% var totalCost = +( product['cost'] ? product['cost']  : 0  ) +
+            +( product['ng-amz'] ? product['ng-amz'] : 0 ) +
+            +( product['amz-customer'] ? product['amz-customer'] : 0) +
+            +( rates[product.SKU] ? rates[product.SKU].toFixed(2) : 0) +
+            +( product["commision"] ? product["commision"] : 0) ;
+            %>
+              <% var profit = product['current-price'] - totalCost;   
+            %>
+          <td class="cost-col"><%= totalCost.toFixed(2) %></td>
+          <td><%= profit ? profit.toFixed(2) : " "; %></td>
+          <td><%= profit && product["cost"] ? (profit / product["cost"] * 100).toFixed(2) : " "; %> % </td>
+          <td><%= profit && product["current-price"]  ? (profit / product["current-price"] * 100).toFixed(2) : " "; %> %</td>
+          <td><%= product['unused'] === true ? 'x' : null %></td>
+        </tr>
+    <% }); %>
+</tbody>
+
+  </table>
+      </div>
+    </div>
+
+  <p style="margin: 20px 0;">Total of <%= products.length %> Products</p>
+  <a class="btn btn-warning" href="/products/edit">Update Costs</a>
+
+<ul class="table-notes">
+  <li>Profit % Cost = Profit divided by Cost </li>
+  <li>Profit % SP = Profit divided by Current Sales Price </li>
+</ul>
+
+</div>
+
+<% include ../partials/footer.ejs %>

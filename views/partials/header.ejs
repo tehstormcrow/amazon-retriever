@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Amazon-Retriever</title>
+  <link rel="icon" href="https://orig00.deviantart.net/d05f/f/2016/268/a/1/annoying_dog_pixel_art_by_dragon97586-daitq63.png">
+  <link rel="stylesheet" href="/css/app.css">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+</head>
+
+<body>
+  <header>
+      <nav class="navbar">
+        <ul class="navbar-nav navbar-left">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Amazon Retriever</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/all-orders">Orders</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/merchant">Merchant</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/products">Products</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/fba-daily-orders">Daily FBA</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/fba-weekly-orders">Weekly FBA</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/fba-monthly-orders">Monthly FBA</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/fba-velocity">Velocity</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/summary">Summary</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/inventory">Inventory</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav navbar-right">
+          <% if(currentUser) { %>
+            <span class="navbar-text">
+              Welcome, <%= currentUser.username %>
+            </span>
+            <li class="nav-item align-self-end">
+              <a class="nav-link" href="/logout">Logout</a>
+            </li>
+          <% } else { %>
+            <li class="nav-item" style="float:right">
+              <a class="nav-link" href="/login">Login</a>
+            </li>
+          <% } %>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main id="pageContent">

@@ -1,0 +1,89 @@
+<% include ./partials/header.ejs %>
+
+
+<div class="container-rowed">
+
+  <div id="table-scroll-1" class="table-scroll">
+    <div id="faux-table-1" class="faux-table"></div>
+    <div id="table-wrap-1" class="table-wrap">
+      <table id="table-1">
+
+<thead>
+    <tr>
+      <!-- Make date dynamic -->
+      <th colspan="9">Inventory</th>
+    </tr>
+    <tr>
+      <th class="table__text-left">SKU</th>
+      <th class="table__text-left">ASIN</th>
+      <th>Qtty</th>
+      <th>Inbound</th>
+      <th>Inv.Val</th>
+      <th>Est.Sales</th>
+      <th>Est.Prft</th>
+    </tr>
+</thead>
+
+<tbody>
+  <% var line = 0, totals = { quantity: 0, inbound: 0, cost: 0, currentPrice: 0, profit: 0} %>
+    <% products.forEach(function(product) { %>
+      <% line += 1 %>
+        <tr <% if(line % 2 == 0){ %>
+          class="odd"
+        <% }%>>
+          <td class="table__text-left"><%= product.SKU %></td>
+          <td class="table__text-left"><%= product.ASIN %></td>
+          <td><%= product.quantity || " " %><% totals.quantity += product.quantity %></td>
+          <td><%= product.inbound || " " %><% totals.inbound += product.inbound %></td>
+          <td>
+            <%= product["cost"] && (product.quantity || product.inbound) ? (product["cost"] * (product.quantity + product.inbound )) .toFixed(2) : "" %>
+            <%  product["cost"] && (product.quantity || product.inbound) ? totals.cost += product["cost"] * (product.quantity + product.inbound) : 0 %>
+          </td>
+          <td>
+            <%= product["current-price"] && (product.quantity || product.inbound ) ? (product["current-price"] * (product.quantity + product.inbound )).toFixed(2) : "" %>
+            <% product["current-price"] && (product.quantity || product.inbound ) ? totals.currentPrice += product["current-price"] * (product.quantity + product.inbound)  : 0%>
+          </td>
+          <% var profit = product['current-price'] - product['cost'] - product['ng-amz'] - product['amz-customer'] - product["commision"] %>
+          <td>
+            <%= profit && (product.quantity || product.inbound ) ? (profit * (product.quantity + product.inbound)).toFixed(2) : " "; %>
+            <% profit && (product.quantity || product.inbound ) ? totals.profit += profit * (product.quantity + product.inbound) : 0 %>
+          </td>
+        </tr>
+    <% }); %>
+
+      <tr>
+        <th class="table__text-left">Totals</th>
+        <th></th>
+        <th><%= totals.quantity %></th>
+        <th><%= totals.inbound %></th>
+        <th><%= totals.cost.toFixed(2) %></th>
+        <th><%= totals.currentPrice.toFixed(2) %></th>
+        <th><%= totals.profit.toFixed(2) %></th>
+      </tr>
+
+
+</tbody>
+
+  </table>
+      </div>
+    </div>
+
+<ul class="table-notes">
+  <li>
+    Est.Sales = estimated sales calculated by current Price
+  </li>
+  <li>
+    Inv.Val = inventory value based on Product Purchase Price
+  </li>
+  <li>
+    Est.Prft = Estimated Profit
+  </li>
+  <li>
+    qtty = quantity
+  </li>
+</ul>
+
+</div>
+
+<% include ./partials/footer.ejs %>
+

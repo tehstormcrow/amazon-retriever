@@ -1,0 +1,51 @@
+<% include partials/header.ejs %>
+<div class="container">
+
+  <div id="table-scroll-1" class="table-scroll">
+    <div id="faux-table-1" class="faux-table"></div>
+    <div id="table-wrap-1" class="table-wrap">
+      <table id="table-1">
+
+        <thead>
+        <tr>
+          <th class="table__text-left">Amazon-order-id</th>
+          <th>Prchs-Date</th>
+          <th class="table__text-left">Ord-status</th>
+          <th class="table__text-left">SKU</th>
+          <th>qty</th>
+          <th>Price</th>
+          <th>Cost</th>
+          <th>Ng - A</th>
+          <th>A - Cst</th>
+          <th>Cmsn</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% var line = 0 %>
+        <% orders.forEach(function(order) { %>
+            <% order["items"].forEach(function(item) { %>
+          <% line += 1 %>
+            <tr <% if(line % 2 == 0){ %>
+              class="odd"
+            <% }%>>
+                <td class="table__text-left"> <%= order["amazon-order-id"] %> </td>
+                <td> <%= order["purchase-date"] %> </td>
+                <td class="table__text-left"> <%= order["order-status"] %> </td>
+                <td class="table__text-left"> <%= item.SKU %> </td>
+                <td> <%= item.quantity %> </td>
+                <td> <%= item.price ? item.price.toFixed(2) : 0 %> $</td>
+                <td> <%= item["cost"].toFixed(2) %> $</td>
+                <td> <%= item["ng-amz"].toFixed(2) %> $</td>
+                <td> <%= item["amz-customer"].toFixed(2) %> $</td>
+                <td> <%= item["commision"].toFixed(2) %> $</td>
+            </tr>
+            <% }) %>
+        <% }); %>
+      </tbody>
+
+      </table>
+      </div>
+  </div>
+
+</div>
+<% include partials/footer.ejs %>

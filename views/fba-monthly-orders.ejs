@@ -1,0 +1,140 @@
+<% include partials/header.ejs %>
+ <div class="container">
+
+  <div id="table-scroll-1" class="table-scroll">
+    <div id="faux-table-1" class="faux-table"></div>
+    <div id="table-wrap-1" class="table-wrap">
+      <table id="table-1">
+
+<thead>
+        <tr>
+          <th>Month</th>
+          <th>Prd</th>
+          <th>Ord</th>
+          <th>Units</th>
+          <th>Total</th>
+          <th>TTL Cost</th>
+          <th>Profit</th>
+          <th>frmSP</th>
+          <th>frmPP</th>
+        </tr>
+</thead>
+
+<tbody>
+  <% var line = 0 %>
+      <% totals.forEach((monthlyTotal) => { %>
+    <% line += 1 %>
+      <tr <% if(line % 2 == 0){ %>
+        class="odd"
+      <% }%>>
+          <td><a href="/fba-monthly-orders/<%= monthlyTotal.month %>" > <%= monthlyTotal.month %></a></td>
+          <td><%= monthlyTotal.products %></td>
+          <td><%= monthlyTotal.orders %></td>
+          <td><%= monthlyTotal.units %></td>
+          <td><%= monthlyTotal.total.toFixed(2) %></td>
+          <td class="cost-col"><%= (monthlyTotal.total.toFixed(2) - monthlyTotal.profit.toFixed(2)).toFixed(2); %></td>
+          <td><%= monthlyTotal.profit.toFixed(2) %></td>
+          <td><%= (monthlyTotal.profit / monthlyTotal.total * 100).toFixed(2) %> %</td>
+          <td><%= (monthlyTotal.profit / monthlyTotal.totalPP * 100).toFixed(2) %> %</td>
+        </tr>
+      <% }) %>
+</tbody>
+      </table>
+    </div>
+    </div>
+
+  <div id="table-scroll-2" class="table-scroll">
+    <div id="faux-table-2" class="faux-table"></div>
+    <div id="table-wrap-2" class="table-wrap">
+      <table id="table-2">
+<thead>
+      <tr>
+        <th colspan="14">Monthly FBA for month : <%= month %></th>
+      </tr>
+      <tr>
+        <th class="table__text-left">SKU</th>
+        <th>Ord</th>
+        <th>Price</th>
+        <th>Units</th>
+        <th>Total</th>
+        <th>Cost</th>
+        <th>Ng-A</th>
+        <th>A-Cust</th>
+        <th>M-Cust</th>
+        <th>Cmsn</th>
+        <th>Ttl Cost</th>
+        <th>Profit</th>
+        <th>frmSP</th>
+        <th>frmPP</th>
+      </tr>
+</thead>
+<tbody>
+   <% var line = 0, totals = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] %>
+        <% monthlyOrders.forEach((monthlyOrder => { %>
+      <% line += 1 %>
+        <tr <% if(line % 2 == 0){ %>
+          class="odd"
+        <% }%>>
+            <td class="table__text-left"> <%= monthlyOrder.SKU %> </td>
+            <td> <%= monthlyOrder.orders %> 
+              <% totals[0] += monthlyOrder.orders %>
+            </td>
+            <td> <%= (monthlyOrder.price / monthlyOrder.quantity).toFixed(2) %> 
+           <% totals[1] += (monthlyOrder.price / monthlyOrder.quantity) %> 
+            </td>
+            <td> <%= monthlyOrder.quantity %> 
+           <% totals[2] += monthlyOrder.quantity %> 
+            </td>
+            <td> <%= monthlyOrder.price.toFixed(2) %> 
+           <% totals[3] += monthlyOrder.price %> 
+            </td>
+            <td> <%= monthlyOrder['cost'].toFixed(2) %> 
+           <% totals[4] += monthlyOrder['cost'] %> 
+            </td>
+            <td> <%= monthlyOrder['ng-amz'].toFixed(2) %> 
+           <% totals[5] += monthlyOrder['ng-amz'] %> 
+            </td>
+            <td> <%= monthlyOrder["amz-customer"].toFixed(2) %> 
+           <% totals[6] += monthlyOrder['amz-customer'] %> 
+            </td>
+            <td> <%= monthlyOrder["m-customer"] ? monthlyOrder["m-customer"].toFixed(2) : 0 %> 
+           <% totals[7] += monthlyOrder['m-customer'] ? monthlyOrder['m-customer'] : 0 %> 
+            </td>
+            <td> <%= monthlyOrder["commision"].toFixed(2) %> 
+           <% totals[8] += monthlyOrder['commision'] %> 
+            </td>
+            <% totalCost = +monthlyOrder['cost'] + +monthlyOrder['ng-amz'] + +monthlyOrder['amz-customer'] + +monthlyOrder['m-customer'] + +monthlyOrder['commision'] %>
+            <% totals[9] += totalCost; %>
+            <td class="cost-col">
+              <%= totalCost.toFixed(2) %>
+            </td>
+            <td> <%= monthlyOrder["profit"].toFixed(2) %> 
+           <% totals[10] += monthlyOrder['profit'] %> 
+            </td>
+            <td><%= (monthlyOrder["profit"] / monthlyOrder.price * 100).toFixed(2)  %> %</td>
+            <td><%= (monthlyOrder["profit"] / monthlyOrder["cost"] * 100).toFixed(2)  %> %</td>
+          </tr>
+          <% })); %>
+          <tr>
+            <th>Totals</th>
+            <th><%= totals[0].toFixed(2) %></th>
+            <th><%= totals[1].toFixed(2) %></th>
+            <th><%= totals[2].toFixed(2) %></th>
+            <th><%= totals[3].toFixed(2) %></th>
+            <th><%= totals[4].toFixed(2) %></th>
+            <th><%= totals[5].toFixed(2) %></th>
+            <th><%= totals[6].toFixed(2) %></th>
+            <th><%= totals[7].toFixed(2) %></th>
+            <th><%= totals[8].toFixed(2) %></th>
+            <th><%= totals[9].toFixed(2) %></th>
+            <th><%= totals[10].toFixed(2) %></th>
+            <th><%= (100 * totals[10] / totals[3]).toFixed(2) %> %</th>
+            <th><%= (100 * totals[10] / totals[4]).toFixed(2) %> %</th>
+          </tr>
+      </tbody>
+      </table>
+    </div>
+    </div>
+
+ </div>
+  <% include partials/footer.ejs %>

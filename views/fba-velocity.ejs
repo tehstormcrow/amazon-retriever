@@ -1,0 +1,119 @@
+<% include partials/header.ejs %>
+ <div>
+  <div id="table-scroll-1" class="table-scroll">
+    <div id="faux-table-1" class="faux-table"></div>
+    <div id="table-wrap-1" class="table-wrap">
+      <table id="table-1">
+    <thead>
+    <tr class="table__header-main">
+      <th colspan="6"></th>
+      <th colspan="33">Sales by Period</th>
+    </tr>
+    <tr class="table__header-secondary" >
+      <th class="table__text-left">SKU</th>
+      <th class="table__text-left">ASIN</th>
+      <th>$CP</th>
+      <th>$LP</th>
+      <th>INV</th>
+      <th>I/B</th>
+      <% for(let i=0; i<33; i++){ %>
+        <th><%= i %></th>
+      <% } %>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% var line = 0 %>
+    <% products.forEach(function(product) { %>
+      <% if(product.unused !== true) { %>
+      <% line += 1 %>
+        <tr <% if(line % 2 == 0){ %>
+          class="odd"
+        <% }%>>
+            <td class="table__text-left"> <%= product.SKU %> </td>
+            <td class="table__text-left"> <%= product.ASIN %> </td>
+            <td> <%= product['current-price'] ? product['current-price'].toFixed(2) : "" %> </td>
+            <td> <%= product['lowest-price'] ? product['lowest-price'].toFixed(2) : "" %> </td>
+            <td <% if(product['quantity'] === 0) { %>
+              class="red"
+            <% } %>>
+             <%= product['quantity'] %> </td>
+            <td> <%= product['inbound'] %> </td>
+            <% let productWeeklies = Object.values(weeklyMap.get(product.SKU)) %>
+            <% productWeeklies.forEach(weekly => { %>
+              <td>
+                <% if(weekly !== 0) { %>
+                  <%= weekly %>
+                <% } else { %>
+                  -
+                <% } %>
+              </td>
+            <% }) %>
+        </tr>
+        <% } %>
+    <% }); %>
+  </tbody>
+  </table>
+
+  </div>
+  </div>
+
+  <div id="table-scroll-2" class="table-scroll" style="margin-top: 36px">
+    <div id="faux-table-2" class="faux-table"></div>
+    <div id="table-wrap-2" class="table-wrap">
+      <table id="table-2">
+<thead>
+    <tr>
+      <th colspan="6">UNUSED</th>
+      <th colspan="33">Sales by Period</th>
+    </tr>
+    <tr>
+      <th class="table__text-left">SKU</th>
+      <th class="table__text-left">ASIN</th>
+      <th>CP $</th>
+      <th>LP $</th>
+      <th>INV</th>
+      <th>I/B</th>
+      <% for(let i=0; i<33; i++){ %>
+        <th><%= i %></th>
+      <% } %>
+    </tr>
+</thead>
+
+<tbody>
+    <% var line = 0 %>
+    <% products.forEach(function(product) { %>
+      <% if(product.unused === true) { %>
+      <% line += 1 %>
+        <tr <% if(line % 2 == 0){ %>
+          class="odd"
+        <% }%>>
+            <td class="table__text-left"> <%= product.SKU %> </td>
+            <td class="table__text-left"> <%= product.ASIN %> </td>
+            <td> <%= product['current-price'] ? product['current-price'].toFixed(2) : "" %> </td>
+            <td> <%= product['lowest-price'] ? product['lowest-price'].toFixed(2) : "" %> </td>
+            <td <% if(product['quantity'] === 0) { %>
+              class="red"
+            <% } %>>
+             <%= product['quantity'] %> </td>
+            <td> <%= product['inbound'] %> </td>
+            <% let productWeeklies = Object.values(weeklyMap.get(product.SKU)) %>
+            <% productWeeklies.forEach(weekly => { %>
+              <td>
+                <% if(weekly !== 0) { %>
+                  <%= weekly %>
+                <% } else { %>
+                  -
+                <% } %>
+              </td>
+            <% }) %>
+        </tr>
+      <% } %>
+    <% }); %>
+</tbody>
+  </table>
+    </div>
+    </div>
+
+ </div>
+<% include partials/footer.ejs %>

@@ -1,0 +1,9 @@
+node_modules
+versions
+
+.env
+.env.development
+.env.prodtest
+
+samples
+backups

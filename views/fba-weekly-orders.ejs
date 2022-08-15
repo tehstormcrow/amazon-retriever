@@ -1,0 +1,142 @@
+<% include partials/header.ejs %>
+<div class="container">
+
+  <div id="table-scroll-1" class="table-scroll">
+    <div id="faux-table-1" class="faux-table"></div>
+    <div id="table-wrap-1" class="table-wrap">
+      <table id="table-1">
+
+<thead>
+      <tr>
+        <th>Week Start</th>
+        <th>Prd</th>
+        <th>Ord</th>
+        <th>Units</th>
+        <th>Total</th>
+        <th>TTL Cost</th>
+        <th>Profit</th>
+        <th>fromSP</th>
+        <th>fromPP</th>
+      </tr>
+</thead>
+<tbody>
+    <% var line = 0 %>
+        <% totals.forEach((weeklyTotal) => { %>
+      <% line += 1 %>
+        <tr <% if(line % 2 == 0){ %>
+          class="odd"
+        <% }%>>
+            <td><a href="/fba-weekly-orders/<%= weeklyTotal.week %>" > <%= weeklyTotal.week %></a></td>
+            <td><%= weeklyTotal.products %></td>
+            <td><%= weeklyTotal.orders %></td>
+            <td><%= weeklyTotal.units %></td>
+            <td><%= weeklyTotal.total.toFixed(2) %></td>
+            <td class="cost-col"><%= (weeklyTotal.total.toFixed(2) - weeklyTotal.profit.toFixed(2)).toFixed(2); %></td>
+            <td><%= weeklyTotal.profit.toFixed(2) %></td>
+            <td><%= (weeklyTotal.profit / weeklyTotal.total * 100).toFixed(2) %> %</td>
+            <td><%= (weeklyTotal.profit / weeklyTotal.totalPP * 100).toFixed(2) %> %</td>
+          </tr>
+        <% }) %>
+      </tbody>
+      </table>
+    </div>
+    </div>
+
+  <div id="table-scroll-2" class="table-scroll">
+    <div id="faux-table-2" class="faux-table"></div>
+    <div id="table-wrap-2" class="table-wrap">
+      <table id="table-2">
+<thead>
+        <tr>
+          <th colspan="14">Weekly FBA for week starting from : <%= week %></th>
+        </tr>
+        <tr>
+          <th class="table__text-left">SKU</th>
+          <th>Ord</th>
+          <th>Price</th>
+          <th>Units</th>
+          <th>Total</th>
+          <th>Cost</th>
+          <th>Ng-A</th>
+          <th>A-Cust</th>
+          <th>M-Cust</th>
+          <th>Cmsn</th>
+          <th>Ttl Cost</th>
+          <th>Profit</th>
+          <th>frmSP</th>
+          <th>frmPP</th>
+        </tr>
+</thead>
+
+<tbody>
+    <% var line = 0, totals = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] %>
+        <% weeklyOrders.forEach((weeklyOrder => { %>
+      <% line += 1 %>
+        <tr <% if(line % 2 == 0){ %>
+          class="odd"
+        <% }%>>
+            <td class="table__text-left"> <%= weeklyOrder.SKU %> </td>
+            <td> <%= weeklyOrder.orders %> 
+              <% totals[0] += weeklyOrder.orders %>
+            </td>
+            <td> <%= (weeklyOrder.price / weeklyOrder.quantity).toFixed(2) %> 
+              <% totals[1] += (weeklyOrder.price / weeklyOrder.quantity) %> 
+            </td>
+            <td> <%= weeklyOrder.quantity %> 
+              <% totals[2] += weeklyOrder.quantity %>
+            </td>
+            <td> <%= weeklyOrder.price.toFixed(2) %> 
+              <% totals[3] += weeklyOrder.price %> 
+            </td>
+            <td> <%= weeklyOrder['cost'].toFixed(2) %>
+             <% totals[4] += weeklyOrder['cost'] %> 
+            </td>
+            <td> <%= weeklyOrder['ng-amz'].toFixed(2) %>
+              <% totals[5] += weeklyOrder['ng-amz'] %> 
+            </td>
+            <td> <%= weeklyOrder["amz-customer"].toFixed(2) %> 
+              <% totals[6] += weeklyOrder['amz-customer'] %> 
+            </td>
+            <td> <%= weeklyOrder["m-customer"] ? weeklyOrder["m-customer"].toFixed(2) : 0 %> 
+              <% totals[7] += weeklyOrder['m-customer'] ? weeklyOrder['m-customer'] : 0%> 
+            </td>
+            <td> <%= weeklyOrder["commision"].toFixed(2) %> 
+              <% totals[8] += weeklyOrder['commision'] %> 
+            </td>
+            <% totalCost = +weeklyOrder['cost'] + +weeklyOrder['ng-amz'] + +weeklyOrder['amz-customer'] + +weeklyOrder['m-customer'] + +weeklyOrder['commision'] %>
+            <% totals[9] += totalCost; %>
+            <td class="cost-col">
+              <%= totalCost.toFixed(2) %>
+            </td>
+            <td> <%= weeklyOrder["profit"].toFixed(2) %> 
+              <% totals[10] += weeklyOrder['profit'] %> 
+            </td>
+            <td><%= (weeklyOrder["profit"] / weeklyOrder.price * 100).toFixed(2)  %> %</td>
+            <td><%= (weeklyOrder["profit"] / weeklyOrder["cost"] * 100).toFixed(2)  %> %</td>
+          </tr>
+          <% })); %>
+          <tr>
+            <th class="table__text-left">Totals</th>
+            <th><%= totals[0].toFixed(2) %></th>
+            <th><%= totals[1].toFixed(2) %></th>
+            <th><%= totals[2].toFixed(2) %></th>
+            <th><%= totals[3].toFixed(2) %></th>
+            <th><%= totals[4].toFixed(2) %></th>
+            <th><%= totals[5].toFixed(2) %></th>
+            <th><%= totals[6].toFixed(2) %></th>
+            <th><%= totals[7].toFixed(2) %></th>
+            <th><%= totals[8].toFixed(2) %></th>
+            <th><%= totals[9].toFixed(2) %></th>
+            <th><%= totals[10].toFixed(2) %></th>
+            <th><%= (100 * totals[10] / totals[3]).toFixed(2) %> %</th>
+            <th><%= (100 * totals[10] / totals[4]).toFixed(2) %> %</th>
+          </TR>
+    </tbody>
+      </table>
+      </div>
+    </div>
+
+
+      </div>
+  <% include partials/footer.ejs %>
+

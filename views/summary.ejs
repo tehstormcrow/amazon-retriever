@@ -1,0 +1,192 @@
+<% include partials/header.ejs %>
+<div>
+    <ul class="year-list">
+    <% years.forEach(function(year) { %>
+      <li><a href="/summary/<%= year %>"><%= year %></a></li>
+    <% })%>
+    </ul>
+    <div id="table-scroll-1" class="table-scroll">
+      <div id="faux-table-1" class="faux-table"></div>
+      <div id="table-wrap-1" class="table-wrap">
+        <table id="table-1">
+      <thead>
+      <tr class="table__header-main">
+        <th colspan="6"></th>
+        <th colspan="33">Sales by Period</th>
+      </tr>
+
+      <tr class="table__header-secondary" >
+        <th class="table__text-left">SKU</th>
+        <th class="table__text-left">ASIN</th>
+        <th>$CP</th>
+        <th>$LP</th>
+        <th>INV</th>
+        <th>I/B</th>
+        <th></th>
+
+        <% let now = new Date();%>
+        <% let toBeSkipped = 0; %>
+
+        <% if(now.getFullYear() == year.substr(0, 4)) {  %>
+          <% toBeSkipped = 12 - now.getMonth() - 1; %>
+        <% }%>
+
+        <% let dates = Object.keys(summaryMap.get(products[0].SKU)) %>
+        <% for(let i = toBeSkipped; i < 12; i++) { %>
+          <th><%= dates[i] %></th>
+        <% } %>
+        <th>Total</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% var line = 0 %>
+      <% products.forEach(product => { %>
+        <% if(!product.unused) { %>
+        <% line += 1 %>
+          <tr <% if(line % 2 == 0){ %>
+            class="odd"
+          <% }%>>
+              <td class="table__text-left"> <%= product.SKU %> </td>
+              <td class="table__text-left"> <%= product.ASIN %> </td>
+              <td> <%= product['current-price'] ? product['current-price'].toFixed(2) : "" %> </td>
+              <td> <%= product['lowest-price'] ? product['lowest-price'].toFixed(2) : "" %> </td>
+              <td <% if(product['quantity'] === 0) { %>
+                class="red"
+              <% } %>>
+               <%= product['quantity'] %> </td>
+              <td> <%= product['inbound'] %> </td>
+
+              <td>
+                    <ul class="summary--list">
+                        <li class="summary--item left-aligned">Qty</li>
+                        <li class="summary--item left-aligned">Total</li>
+                        <li class="summary--item left-aligned">Profit</li>
+                        <li class="summary--item left-aligned">Ratio</li>
+                        <li class="summary--item left-aligned cost-related">Cost</li>
+                        <li class="summary--item left-aligned cost-related">Cost Ratio</li>
+                    </ul
+                </td>
+
+              <% let productSummaries = Object.values(summaryMap.get(product.SKU)) %>
+              <% let totalQuantity = 0, totalProfit = 0, totalTotal = 0, totalRatio = 0, totalCost = 0, totalCostRatio = 0; %>
+              <% for(let i=toBeSkipped; i < 12; i++) { %>
+                <% summary = productSummaries[i]; %>
+                <% totalQuantity += summary.quantity; %>
+                <% totalProfit += summary.profit; %>
+                <% totalTotal += summary.total; %>
+                <% totalCost += summary.cost ? summary.cost : 0; %>
+                <td>
+                    <ul class="summary--list">
+                        <li class="summary--item"><%= summary.quantity ? summary.quantity : '-' %></li>
+                        <li class="summary--item"><%= summary.total ? summary.total.toFixed(0) + " $" : "-" %></li>
+                        <li class="summary--item"><%= summary.profit ? summary.profit.toFixed(0)  + " $" : '-' %></li>
+                        <li class="summary--item"><%= summary.ratio ? summary.ratio.toFixed(2) + " %" : "-" %></li>
+                        <li class="summary--item cost-related"><%= summary.cost ? summary.cost.toFixed(0) + " $": "-" %></li>
+                        <li class="summary--item cost-related"><%= summary.costRatio ? summary.costRatio.toFixed(2) + " %" : "-" %></li>
+                    </ul>
+                </td>
+              <% } %>
+              <% totalRatio = totalProfit && totalTotal ? totalProfit / totalTotal * 100 : false %>
+              <% totalCostRatio = totalProfit && totalCost ? totalProfit / totalCost * 100 : false %>
+              <td>
+                <ul class="summary--list">
+                    <li class="summary--item"><%= totalQuantity ? totalQuantity : '-' %></li>
+                    <li class="summary--item"><%= totalTotal ? totalTotal.toFixed(0) + " $" : "-" %></li>
+                    <li class="summary--item"><%= totalProfit ? totalProfit.toFixed(0)  + " $" : '-' %></li>
+                    <li class="summary--item"><%= totalRatio ? totalRatio.toFixed(2) + " %" : "-" %></li>
+                    <li class="summary--item cost-related"><%= totalCost ? totalCost.toFixed(0) + " $" : "-" %></li>
+                    <li class="summary--item cost-related"><%= totalCostRatio ? totalCostRatio.toFixed(2) + " %" : "-" %></li>
+                </ul>
+            </td>
+          </tr>
+          <% } %>
+      <% }) %>
+    </tbody>
+    </table>
+
+    </div>
+    </div>
+
+    <div id="table-scroll-2" class="table-scroll" style="margin-top: 36px">
+      <div id="faux-table-2" class="faux-table"></div>
+      <div id="table-wrap-2" class="table-wrap">
+        <table id="table-2">
+  <thead>
+      <tr>
+        <th colspan="6">UNUSED</th>
+        <th colspan="33">Sales by Period</th>
+      </tr>
+      <tr>
+        <th class="table__text-left">SKU</th>
+        <th class="table__text-left">ASIN</th>
+        <th>CP $</th>
+        <th>LP $</th>
+        <th>INV</th>
+        <th>I/B</th>
+        <% for(let i = toBeSkipped; i < 12; i++) { %>
+          <th><%= dates[i] %></th>
+        <% } %>
+        <th>Total</th>
+      </tr>
+  </thead>
+
+  <tbody>
+      <% var line = 0 %>
+      <% products.forEach(function(product) { %>
+        <% if(product.unused === true) { %>
+        <% line += 1 %>
+          <tr <% if(line % 2 == 0){ %>
+            class="odd"
+          <% }%>>
+              <td class="table__text-left"> <%= product.SKU %> </td>
+              <td class="table__text-left"> <%= product.ASIN %> </td>
+              <td> <%= product['current-price'] ? product['current-price'].toFixed(2) : "" %> </td>
+              <td> <%= product['lowest-price'] ? product['lowest-price'].toFixed(2) : "" %> </td>
+              <td <% if(product['quantity'] === 0) { %>
+                class="red"
+              <% } %>>
+               <%= product['quantity'] %> </td>
+              <td> <%= product['inbound'] %> </td>
+
+              <% let productSummaries = Object.values(summaryMap.get(product.SKU)) %>
+              <% let totalQuantity = 0, totalProfit = 0, totalTotal = 0, totalRatio = 0, totalCost = 0, totalCostRatio = 0; %>
+
+              <% for(let i=toBeSkipped; i < 12; i++) { %>
+                <% summary = productSummaries[i]; %>
+                <% totalQuantity += summary.quantity; %>
+                <% totalProfit += summary.profit; %>
+                <% totalTotal += summary.total; %>
+                <% totalCost += summary.cost ? summary.cost : 0; %>
+                <td>
+                    <ul class="summary--list">
+                        <li class="summary--item"><%= summary.quantity ? summary.quantity : '-' %></li>
+                        <li class="summary--item"><%= summary.total ? summary.total.toFixed(0) + " $" : "-" %></li>
+                        <li class="summary--item"><%= summary.profit ? summary.profit.toFixed(0)  + " $" : '-' %></li>
+                        <li class="summary--item"><%= summary.ratio ? summary.ratio.toFixed(2) + " %" : "-" %></li>
+                        <li class="summary--item cost-related"><%= summary.cost ? summary.cost.toFixed(0) + " $" : "-" %></li>
+                        <li class="summary--item cost-related"><%= summary.costRatio ? summary.costRatio.toFixed(2) + " %" : "-" %></li>
+                    </ul>
+                </td>
+              <% } %>
+              <% totalRatio = totalProfit && totalTotal ? totalProfit / totalTotal * 100 : false %>
+              <td>
+                <ul class="summary--list">
+                    <li class="summary--item"><%= totalQuantity ? totalQuantity : '-' %></li>
+                    <li class="summary--item"><%= totalTotal ? totalTotal.toFixed(0) + " $" : "-" %></li>
+                    <li class="summary--item"><%= totalProfit ? totalProfit.toFixed(0)  + " $" : '-' %></li>
+                    <li class="summary--item"><%= totalRatio ? totalRatio.toFixed(2) + " %" : "-" %></li>
+                    <li class="summary--item cost-related"><%= totalCost ? totalCost.toFixed(0) + " $" : "-" %></li>
+                    <li class="summary--item cost-related"><%= totalCostRatio ? totalCostRatio.toFixed(2) + " %" : "-" %></li>
+                </ul>
+            </td>
+          </tr>
+        <% } %>
+      <% }); %>
+  </tbody>
+    </table>
+      </div>
+      </div>
+
+   </div>
+  <% include partials/footer.ejs %>

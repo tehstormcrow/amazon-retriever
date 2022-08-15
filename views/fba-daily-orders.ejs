@@ -1,0 +1,144 @@
+<% include partials/header.ejs %>
+ <div class="container">
+
+  <div id="table-scroll-1" class="table-scroll">
+    <div id="faux-table-1" class="faux-table"></div>
+    <div id="table-wrap-1" class="table-wrap">
+      <table id="table-1">
+
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Day</th>
+          <th>Prd</th>
+          <th>Ord</th>
+          <th>Units</th>
+          <th>Total</th>
+          <th>TTL Cost</th>
+          <th>Profit </th>
+          <th>frmSP</th>
+          <th>frmPP</th>
+        </tr>
+      </thead>
+
+      <tbody>
+      <% var line = 0 %>
+        <% totals.forEach((dailyTotal) => { %>
+      <% line += 1 %>
+        <tr <% if(line % 2 == 0){ %>
+          class="odd"
+        <% }%>>
+            <td><a href="/fba-daily-orders/<%= dailyTotal.day %>" > <%= dailyTotal.day %></a></td>
+            <td><%= dailyTotal.dayOfWeek %></td>
+            <td><%= dailyTotal.products %></td>
+            <td><%= dailyTotal.orders %></td>
+            <td><%= dailyTotal.units %></td>
+            <td><%= dailyTotal.total.toFixed(2) %></td>
+            <td class="cost-col"><%= (dailyTotal.total.toFixed(2) - dailyTotal.profit.toFixed(2)).toFixed(2); %></td>
+            <td><%= dailyTotal.profit.toFixed(2) %></td>
+            <td><%= (dailyTotal.profit / dailyTotal.total * 100).toFixed(2) %> %</td>
+            <td><%= (dailyTotal.profit / dailyTotal.totalPP * 100).toFixed(2) %> %</td>
+          </tr>
+        <% }) %>
+      </tbody>
+      </table>
+      </div>
+    </div>
+
+  <div id="table-scroll-2" class="table-scroll">
+    <div id="faux-table-2" class="faux-table"></div>
+    <div id="table-wrap-2" class="table-wrap">
+      <table id="table-2">
+
+<thead>
+        <tr>
+          <!-- Make date dynamic -->
+          <th colspan="14" class=".table__text-left">Daily FBA for day : <%= day %></th>
+        </tr>
+        <tr>
+          <th class="table__text-left">SKU</th>
+          <th>Ord</th>
+          <th>Price</th>
+          <th>Units</th>
+          <th>Total</th>
+          <th>Cost</th>
+          <th>Ng-A</th>
+          <th>A-Cust</th>
+          <th>M-Cust</th>
+          <th>Cmsn</th>
+          <th>ttl Cost</th>
+          <th>Profit</th>
+          <th>frmSP</th>
+          <th>frmPP</th>
+        </tr>
+</thead>
+<tbody>
+    <% var line = 0, totals = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] %>
+        <% dailyOrders.forEach((dailyOrder => { %>
+      <% line += 1 %>
+        <tr <% if(line % 2 == 0){ %>
+          class="odd"
+        <% }%>>
+            <td class="table__text-left"> <%= dailyOrder.SKU %> </td>
+            <td> <%= dailyOrder.orders %> <% totals[0] += dailyOrder.orders %></td>
+            <td>
+              <%= (dailyOrder.price / dailyOrder.quantity).toFixed(2) %>
+              <% totals[1] += (dailyOrder.price / dailyOrder.quantity) %>
+            </td>
+            <td> <%= dailyOrder.quantity %>
+              <% totals[2] += dailyOrder.quantity %>
+            </td>
+            <td> <%= dailyOrder.price.toFixed(2) %>
+           <% totals[3] += dailyOrder.price %>
+            </td>
+            <td> <%= dailyOrder['cost'].toFixed(2) %>
+           <% totals[4] += dailyOrder['cost'] %>
+            </td>
+            <td> <%= dailyOrder['ng-amz'].toFixed(2) %>
+           <% totals[5] += dailyOrder['ng-amz'] %>
+            </td>
+            <td> <%= dailyOrder["amz-customer"].toFixed(2) %>
+           <% totals[6] += dailyOrder["amz-customer"] %>
+            </td>
+            <td> <%= dailyOrder["m-customer"] ? dailyOrder["m-customer"].toFixed(2) : 0%>
+           <% totals[7] += dailyOrder["m-customer"] ? dailyOrder["m-customer"] : 0 %>
+            </td>
+            <td> <%= dailyOrder["commision"].toFixed(2) %>
+           <% totals[8] += dailyOrder["commision"] %>
+            </td>
+            <% totalCost = +dailyOrder['cost'] + +dailyOrder['ng-amz'] + +dailyOrder['amz-customer'] + +dailyOrder['m-customer'] + +dailyOrder['commision'] %>
+            <% totals[9] += totalCost; %>
+            <td class="cost-col">
+              <%= totalCost.toFixed(2); %>
+            </td>
+            <td> <%= dailyOrder["profit"].toFixed(2) %>
+           <% totals[10] += dailyOrder['profit'] %>
+            </td>
+            <td>  <%= (dailyOrder["profit"] / dailyOrder.price * 100).toFixed(2)  %> % </td>
+            <td>  <%= (dailyOrder["profit"] / dailyOrder['cost'] * 100).toFixed(2)  %> % </td>
+          </tr>
+          <% })); %>
+          <tr>
+            <th>Totals</th>
+            <th><%= totals[0] %></th>
+            <th><%= totals[1].toFixed(2) %></th>
+            <th><%= totals[2] %></th>
+            <th><%= totals[3].toFixed(2) %></th>
+            <th><%= totals[4].toFixed(2) %></th>
+            <th><%= totals[5].toFixed(2) %></th>
+            <th><%= totals[6].toFixed(2) %></th>
+            <th><%= totals[7].toFixed(2) %></th>
+            <th><%= totals[8].toFixed(2) %></th>
+            <th><%= totals[9].toFixed(2) %></th>
+            <th><%= totals[10].toFixed(2) %></th>
+            <th> <%= (100 * totals[10] / totals[3]).toFixed(2) %> %</th>
+            <th> <%= (100 * totals[10] / totals[4]).toFixed(2) %> %</th>
+          </tr>
+</tbody>
+      </table>
+      </div>
+  </div>
+
+ </div>
+
+  <% include partials/footer.ejs %>
